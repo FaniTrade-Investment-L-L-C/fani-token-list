@@ -61,7 +61,7 @@ export const CLUSTER_SLUGS: { [id: string]: ENV } = {
 
 export class GitHubTokenListResolutionStrategy {
   repositories = [
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json',
+    'https://raw.githubusercontent.com/FaniTrade-Investment-L-L-C/fani-token-list/main/src/tokens/solana.tokenlist.json',
   ];
 
   resolve = () => {
@@ -94,7 +94,7 @@ const queryJsonFiles = async (files: string[]) => {
         const response = await fetch(repo);
         const json = (await response.json()) as TokenList;
         return json;
-      } catch {
+      } catch  {
         console.info(
           `@solana/token-registry: falling back to static repository.`
         );

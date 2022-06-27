@@ -1,11 +1,11 @@
 {
-  "name": "@solana/spl-token-registry",
-  "version": "0.2.4574",
-  "description": "Solana Token Registry",
+  "name": "@fanitrade/fani-solana-tokenlist",
+  "version": "1.0.0",
+  "description": "Fanitrade Token Registry",
   "main": "dist/main/index.js",
   "typings": "dist/main/index.d.ts",
   "module": "dist/module/index.js",
-  "repository": "https://github.com/solana-labs/token-list",
+  "repository": "https://github.com/FaniTrade-Investment-L-L-C/fani-token-list",
   "license": "Apache",
   "keywords": [],
   "scripts": {
