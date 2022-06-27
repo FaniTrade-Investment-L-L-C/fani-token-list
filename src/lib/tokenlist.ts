@@ -1,6 +1,14 @@
 import { fetch } from 'cross-fetch';
-
+import { PublicKey , Connection , clusterApiUrl } from "@solana/web3.js";
+import * as anchor from "@project-serum/anchor";
 import tokenlist from './../tokens/solana.tokenlist.json';
+import { decodeMetadata } from '../utils/Metadata';
+const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
+  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+);
+
+
+const connection = new Connection(clusterApiUrl("devnet"));
 
 export enum ENV {
   MainnetBeta = 101,
@@ -20,6 +28,8 @@ export interface TagDetails {
   readonly name: string;
   readonly description: string;
 }
+
+
 
 export interface TokenExtensions {
   readonly website?: string;
@@ -117,6 +127,7 @@ export enum Strategy {
 
 export class StaticTokenListResolutionStrategy {
   resolve = () => {
+    // @ts-ignore
     return tokenlist.tokens || [];
   };
 }
@@ -138,6 +149,28 @@ export class TokenListProvider {
   };
 }
 
+
+async function getMetadata (mint: PublicKey): Promise<PublicKey>  {
+  return (await anchor.web3.PublicKey.findProgramAddress(
+    [
+      Buffer.from("metadata"),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  ))[0];
+
+}
+
+export async function getTokenMetaData(mint : string)  {
+  let fetchedData;
+    const metaData = await getMetadata(new PublicKey(mint));
+    const accountInfo = await connection.getParsedAccountInfo(metaData);
+    let decodedData = decodeMetadata(accountInfo?.value?.data);
+    fetchedData = await (await fetch(decodedData.data.uri)).json();
+  
+  return fetchedData
+}
 export class TokenListContainer {
   constructor(private tokenList: TokenInfo[]) {}
 

@@ -1,8 +1,4 @@
----
-### 🚨🚨🚨This repository is being deprecated 🚨🚨🚨
----
 
-As of June 20th, this repository will be archived and will receive no more updates. The repository will be set to read-only and the npm package will still exist at `@solana/spl-token-registry`.
 
 ## Adding a New Token
 
@@ -82,11 +78,11 @@ The JSON schema for the tokens includes: chainId, address, name, decimals, symbo
 ### Installation
 
 ```bash
-npm install @solana/spl-token-registry
+npm i @fanitrade/fani-solana-tokenlist
 ```
 
 ```bash
-yarn add @solana/spl-token-registry
+yarn add @fanitrade/fani-solana-tokenlist
 ```
 
 ### Examples
