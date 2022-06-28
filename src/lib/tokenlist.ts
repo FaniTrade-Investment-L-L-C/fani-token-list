@@ -1,9 +1,10 @@
-import { fetch } from 'cross-fetch';
-import { PublicKey , Connection } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
-import tokenlist from './../tokens/solana.tokenlist.json';
 import { decodeMetadata } from '../utils/Metadata';
+import tokenlist from './../tokens/solana.tokenlist.json';
 import axios from 'axios';
+import { fetch } from 'cross-fetch';
+
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
 );
@@ -123,7 +124,6 @@ export enum Strategy {
 
 export class StaticTokenListResolutionStrategy {
   resolve = () => {
-    // @ts-ignore
     return tokenlist.tokens || [];
   };
 }
@@ -158,16 +158,18 @@ async function getMetadata(mint: PublicKey): Promise<PublicKey> {
   )[0];
 }
 
-export async function getTokenMetaData(connection : Connection , mint: string): Promise<any> {
+export async function getTokenMetaData(
+  connection: Connection,
+  mint: string
+): Promise<any> {
   let fetchedData: any;
   const metaData = await getMetadata(new PublicKey(mint));
   const accountInfo = await connection.getParsedAccountInfo(metaData);
-  let decodedData = decodeMetadata(accountInfo?.value?.data);
+  const decodedData = decodeMetadata(accountInfo?.value?.data);
   if (decodedData) {
     let url = encodeURI(decodedData.data.uri);
     return axios.get(url.split('%00%00%00%00')[0]).then((res) => {
       fetchedData = res.data;
-      // @ts-ignore
       return new Promise(function (resolve, reject) {
         resolve(fetchedData);
       });
