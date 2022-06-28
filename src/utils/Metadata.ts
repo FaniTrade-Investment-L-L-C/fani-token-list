@@ -1,32 +1,34 @@
-import { PublicKey } from "@solana/web3.js";
-import { deserializeUnchecked, BinaryReader, BinaryWriter } from "borsh";
-import { programIds } from "./id";
-import base58 from "bs58";
+import { PublicKey } from '@solana/web3.js';
+import { deserializeUnchecked, BinaryReader, BinaryWriter } from 'borsh';
+import { programIds } from './id';
+import base58 from 'bs58';
 
-export const METADATA_PREFIX = "metadata";
-export const EDITION = "edition";
-export const RESERVATION = "reservation";
+export const METADATA_PREFIX = 'metadata';
+export const EDITION = 'edition';
+export const RESERVATION = 'reservation';
 export const EDITION_MARKER_BIT_SIZE = 248;
 
 export const extendBorsh = () => {
-  (BinaryReader.prototype as any).readPubkey = function() {
+  (BinaryReader.prototype as any).readPubkey = function () {
     const reader = (this as unknown) as BinaryReader;
     const array = reader.readFixedArray(32);
     return new PublicKey(array);
   };
 
-  (BinaryWriter.prototype as any).writePubkey = function(value: PublicKey) {
+  (BinaryWriter.prototype as any).writePubkey = function (value: PublicKey) {
     const writer = (this as unknown) as BinaryWriter;
     writer.writeFixedArray(value.toBuffer());
   };
 
-  (BinaryReader.prototype as any).readPubkeyAsString = function() {
+  (BinaryReader.prototype as any).readPubkeyAsString = function () {
     const reader = (this as unknown) as BinaryReader;
     const array = reader.readFixedArray(32);
     return base58.encode(array);
   };
 
-  (BinaryWriter.prototype as any).writePubkeyAsString = function(value: any): void {
+  (BinaryWriter.prototype as any).writePubkeyAsString = function (
+    value: any
+  ): void {
     const writer = (this as unknown) as BinaryWriter;
     writer.writeFixedArray(base58.decode(value));
   };
@@ -45,8 +47,8 @@ const MetadataKey = {
 
 export const findProgramAddress = async (seeds: any, programId: any) => {
   const key = `pda-${seeds.reduce(
-    (agg: any, item: any) => agg + item.toString("hex"),
-    ""
+    (agg: any, item: any) => agg + item.toString('hex'),
+    ''
   )}${programId.toString()}`;
   const cached = localStorage.getItem(key);
   if (cached) {
@@ -66,28 +68,29 @@ export const findProgramAddress = async (seeds: any, programId: any) => {
 };
 
 export const decodeMetadata = (buffer: any) => {
+  let metadata;
   try {
-    const metadata = deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer);
-    return metadata;
+    metadata = deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer);
+  } catch {
+    return;
   }
-  catch {
-    console.log("error decoding metadata");
-    return null
-  }
+  return metadata;
 };
 
 async function getEdition(tokenMint: any) {
   const PROGRAM_IDS = programIds();
 
-  return (await findProgramAddress(
-    [
-      Buffer.from(METADATA_PREFIX),
-      PROGRAM_IDS.metadata.toBuffer(),
-      tokenMint.toBuffer(),
-      Buffer.from(EDITION),
-    ],
-    PROGRAM_IDS.metadata
-  ))[0];
+  return (
+    await findProgramAddress(
+      [
+        Buffer.from(METADATA_PREFIX),
+        PROGRAM_IDS.metadata.toBuffer(),
+        tokenMint.toBuffer(),
+        Buffer.from(EDITION),
+      ],
+      PROGRAM_IDS.metadata
+    )
+  )[0];
 }
 
 export class Metadata {
@@ -174,7 +177,7 @@ export class EditionMarker {
     const indexOffset = Math.floor(editionOffset / 8);
 
     if (indexOffset > 30) {
-      throw new Error("bad index for edition");
+      throw new Error('bad index for edition');
     }
 
     const positionInBitsetFromRight = 7 - (editionOffset % 8);
@@ -219,23 +222,23 @@ export const METADATA_SCHEMA = new Map([
   [
     CreateMetadataArgs,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["instruction", "u8"],
-        ["data", Data],
-        ["isMutable", "u8"], // bool
+        ['instruction', 'u8'],
+        ['data', Data],
+        ['isMutable', 'u8'], // bool
       ],
     },
   ],
   [
     UpdateMetadataArgs,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["instruction", "u8"],
-        ["data", { kind: "option", type: Data }],
-        ["updateAuthority", { kind: "option", type: "pubkey" }],
-        ["primarySaleHappened", { kind: "option", type: "u8" }],
+        ['instruction', 'u8'],
+        ['data', { kind: 'option', type: Data }],
+        ['updateAuthority', { kind: 'option', type: 'pubkey' }],
+        ['primarySaleHappened', { kind: 'option', type: 'u8' }],
       ],
     },
   ],
@@ -243,90 +246,104 @@ export const METADATA_SCHEMA = new Map([
   [
     CreateMasterEditionArgs,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["instruction", "u8"],
-        ["maxSupply", { kind: "option", type: "u64" }],
+        ['instruction', 'u8'],
+        ['maxSupply', { kind: 'option', type: 'u64' }],
       ],
     },
   ],
   [
     MintPrintingTokensArgs,
     {
-      kind: "struct",
-      fields: [["instruction", "u8"], ["supply", "u64"]],
+      kind: 'struct',
+      fields: [
+        ['instruction', 'u8'],
+        ['supply', 'u64'],
+      ],
     },
   ],
   [
     MasterEditionV1,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["key", "u8"],
-        ["supply", "u64"],
-        ["maxSupply", { kind: "option", type: "u64" }],
-        ["printingMint", "pubkey"],
-        ["oneTimePrintingAuthorizationMint", "pubkey"],
+        ['key', 'u8'],
+        ['supply', 'u64'],
+        ['maxSupply', { kind: 'option', type: 'u64' }],
+        ['printingMint', 'pubkey'],
+        ['oneTimePrintingAuthorizationMint', 'pubkey'],
       ],
     },
   ],
   [
     MasterEditionV2,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["key", "u8"],
-        ["supply", "u64"],
-        ["maxSupply", { kind: "option", type: "u64" }],
+        ['key', 'u8'],
+        ['supply', 'u64'],
+        ['maxSupply', { kind: 'option', type: 'u64' }],
       ],
     },
   ],
   [
     Edition,
     {
-      kind: "struct",
-      fields: [["key", "u8"], ["parent", "pubkey"], ["edition", "u64"]],
+      kind: 'struct',
+      fields: [
+        ['key', 'u8'],
+        ['parent', 'pubkey'],
+        ['edition', 'u64'],
+      ],
     },
   ],
   [
     Data,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["name", "string"],
-        ["symbol", "string"],
-        ["uri", "string"],
-        ["sellerFeeBasisPoints", "u16"],
-        ["creators", { kind: "option", type: [Creator] }],
+        ['name', 'string'],
+        ['symbol', 'string'],
+        ['uri', 'string'],
+        ['sellerFeeBasisPoints', 'u16'],
+        ['creators', { kind: 'option', type: [Creator] }],
       ],
     },
   ],
   [
     Creator,
     {
-      kind: "struct",
-      fields: [["address", "pubkey"], ["verified", "u8"], ["share", "u8"]],
+      kind: 'struct',
+      fields: [
+        ['address', 'pubkey'],
+        ['verified', 'u8'],
+        ['share', 'u8'],
+      ],
     },
   ],
   [
     Metadata,
     {
-      kind: "struct",
+      kind: 'struct',
       fields: [
-        ["key", "u8"],
-        ["updateAuthority", "pubkey"],
-        ["mint", "pubkey"],
-        ["data", Data],
-        ["primarySaleHappened", "u8"], // bool
-        ["isMutable", "u8"], // bool
+        ['key', 'u8'],
+        ['updateAuthority', 'pubkey'],
+        ['mint', 'pubkey'],
+        ['data', Data],
+        ['primarySaleHappened', 'u8'], // bool
+        ['isMutable', 'u8'], // bool
       ],
     },
   ],
   [
     EditionMarker,
     {
-      kind: "struct",
-      fields: [["key", "u8"], ["ledger", [31]]],
+      kind: 'struct',
+      fields: [
+        ['key', 'u8'],
+        ['ledger', [31]],
+      ],
     },
   ],
 ]);

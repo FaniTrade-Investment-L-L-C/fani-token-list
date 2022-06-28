@@ -1,15 +1,14 @@
 import { fetch } from 'cross-fetch';
-import { PublicKey , Connection , clusterApiUrl } from "@solana/web3.js";
-import * as anchor from "@project-serum/anchor";
+import { PublicKey, Connection, clusterApiUrl } from '@solana/web3.js';
+import * as anchor from '@project-serum/anchor';
 import tokenlist from './../tokens/solana.tokenlist.json';
 import { decodeMetadata } from '../utils/Metadata';
-import axios from 'axios'
+import axios from 'axios';
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+  'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
 );
 
-
-const connection = new Connection(clusterApiUrl("devnet"));
+const connection = new Connection(clusterApiUrl('mainnet-beta'));
 
 export enum ENV {
   MainnetBeta = 101,
@@ -29,8 +28,6 @@ export interface TagDetails {
   readonly name: string;
   readonly description: string;
 }
-
-
 
 export interface TokenExtensions {
   readonly website?: string;
@@ -105,7 +102,7 @@ const queryJsonFiles = async (files: string[]) => {
         const response = await fetch(repo);
         const json = (await response.json()) as TokenList;
         return json;
-      } catch  {
+      } catch {
         console.info(
           `@solana/token-registry: falling back to static repository.`
         );
@@ -150,40 +147,40 @@ export class TokenListProvider {
   };
 }
 
-
-async function getMetadata (mint: PublicKey): Promise<PublicKey>  {
-  return (await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from("metadata"),
-      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-      mint.toBuffer(),
-    ],
-    TOKEN_METADATA_PROGRAM_ID
-  ))[0];
-
+async function getMetadata(mint: PublicKey): Promise<PublicKey> {
+  return (
+    await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from('metadata'),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mint.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID
+    )
+  )[0];
 }
 
-export async function getTokenMetaData(mint : string)  {
-  let fetchedData : any;
-    const metaData = await getMetadata(new PublicKey(mint));
-    const accountInfo = await connection.getParsedAccountInfo(metaData);
-    let decodedData = decodeMetadata(accountInfo?.value?.data);
-    if(decodedData) {
-      let url = encodeURI(decodedData.data.uri);
-        return axios.get( url.split("%00%00%00%00")[0]).then((res) => {
-          fetchedData = res.data;
-           // @ts-ignore
-          return new Promise(function(resolve, reject) {
-            resolve(fetchedData);
-          });
-        })
-    }
-    else {
-       // @ts-ignore
-      new Promise(function(resolve, reject) {
-        reject('failed to fetch token data');
+export async function getTokenMetaData(mint: string): Promise<any> {
+  let fetchedData: any;
+  const metaData = await getMetadata(new PublicKey(mint));
+  const accountInfo = await connection.getParsedAccountInfo(metaData);
+  let decodedData = decodeMetadata(accountInfo?.value?.data);
+  if (decodedData) {
+    let url = encodeURI(decodedData.data.uri);
+    return axios.get(url.split('%00%00%00%00')[0]).then((res) => {
+      fetchedData = res.data;
+      // @ts-ignore
+      return new Promise(function (resolve, reject) {
+        resolve(fetchedData);
       });
-    }
+    });
+  } else {
+    return {};
+    // // @ts-ignore
+    // new Promise(function (resolve, reject) {
+    //   reject({});
+    // });
+  }
 }
 export class TokenListContainer {
   constructor(private tokenList: TokenInfo[]) {}
