@@ -25,6 +25,8 @@ new TokenListProvider().resolve().then((tokens) => {
 });
 ```
 
+### Examples
+
 ### Query available tokens on chain
 
 import React, { useState, useEffect } from "react";
