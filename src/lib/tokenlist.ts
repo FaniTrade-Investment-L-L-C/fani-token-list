@@ -3,6 +3,7 @@ import { PublicKey , Connection , clusterApiUrl } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor";
 import tokenlist from './../tokens/solana.tokenlist.json';
 import { decodeMetadata } from '../utils/Metadata';
+import axios from 'axios'
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
 );
@@ -163,13 +164,26 @@ async function getMetadata (mint: PublicKey): Promise<PublicKey>  {
 }
 
 export async function getTokenMetaData(mint : string)  {
-  let fetchedData;
+  let fetchedData : any;
     const metaData = await getMetadata(new PublicKey(mint));
     const accountInfo = await connection.getParsedAccountInfo(metaData);
     let decodedData = decodeMetadata(accountInfo?.value?.data);
-    fetchedData = await (await fetch(decodedData.data.uri)).json();
-  
-  return fetchedData
+    if(decodedData) {
+      let url = encodeURI(decodedData.data.uri);
+        return axios.get( url.split("%00%00%00%00")[0]).then((res) => {
+          fetchedData = res.data;
+           // @ts-ignore
+          return new Promise(function(resolve, reject) {
+            resolve(fetchedData);
+          });
+        })
+    }
+    else {
+       // @ts-ignore
+      new Promise(function(resolve, reject) {
+        reject('failed to fetch token data');
+      });
+    }
 }
 export class TokenListContainer {
   constructor(private tokenList: TokenInfo[]) {}

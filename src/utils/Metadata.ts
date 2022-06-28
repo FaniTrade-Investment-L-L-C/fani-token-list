@@ -66,8 +66,14 @@ export const findProgramAddress = async (seeds: any, programId: any) => {
 };
 
 export const decodeMetadata = (buffer: any) => {
-  const metadata = deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer);
-  return metadata;
+  try {
+    const metadata = deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer);
+    return metadata;
+  }
+  catch {
+    console.log("error decoding metadata");
+    return null
+  }
 };
 
 async function getEdition(tokenMint: any) {
