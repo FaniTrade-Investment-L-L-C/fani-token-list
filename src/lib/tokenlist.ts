@@ -1,9 +1,11 @@
-import { Connection, PublicKey } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
-import { decodeMetadata } from '../utils/Metadata';
-import tokenlist from './../tokens/solana.tokenlist.json';
+import { Connection, PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { fetch } from 'cross-fetch';
+
+import { decodeMetadata } from '../utils/Metadata';
+
+import tokenlist from './../tokens/solana.tokenlist.json';
 
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
@@ -167,7 +169,7 @@ export async function getTokenMetaData(
   const accountInfo = await connection.getParsedAccountInfo(metaData);
   const decodedData = decodeMetadata(accountInfo?.value?.data);
   if (decodedData) {
-    let url = encodeURI(decodedData.data.uri);
+    const url = encodeURI(decodedData.data.uri);
     return axios.get(url.split('%00%00%00%00')[0]).then((res) => {
       fetchedData = res.data;
       return new Promise(function (resolve) {
