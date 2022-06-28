@@ -28,7 +28,7 @@ new TokenListProvider().resolve().then((tokens) => {
 ### Examples
 
 ### Query available tokens on chain
-
+```typescript
 import React, { useState, useEffect } from "react";
 
 import { TokenInfo, TokenListProvider , getTokenMetaData } from "@fanitrade/fani-solana-tokenlist";
@@ -75,3 +75,5 @@ export const TokenMetaData = ({ mint: string }) => {
     </>
   );
 };
+
+```
