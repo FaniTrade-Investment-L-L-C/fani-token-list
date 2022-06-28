@@ -1,6 +1,6 @@
 {
   "name": "@fanitrade/fani-solana-tokenlist",
-  "version": "1.3.3",
+  "version": "1.3.5",
   "description": "Fanitrade Token Registry",
   "main": "dist/main/index.js",
   "typings": "dist/main/index.d.ts",
