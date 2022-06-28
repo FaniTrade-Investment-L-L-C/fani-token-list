@@ -1,5 +1,5 @@
 import { fetch } from 'cross-fetch';
-import { PublicKey, Connection, clusterApiUrl } from '@solana/web3.js';
+import { PublicKey , Connection } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import tokenlist from './../tokens/solana.tokenlist.json';
 import { decodeMetadata } from '../utils/Metadata';
@@ -7,8 +7,6 @@ import axios from 'axios';
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
 );
-
-const connection = new Connection(clusterApiUrl('mainnet-beta'));
 
 export enum ENV {
   MainnetBeta = 101,
@@ -160,7 +158,7 @@ async function getMetadata(mint: PublicKey): Promise<PublicKey> {
   )[0];
 }
 
-export async function getTokenMetaData(mint: string): Promise<any> {
+export async function getTokenMetaData(connection : Connection , mint: string): Promise<any> {
   let fetchedData: any;
   const metaData = await getMetadata(new PublicKey(mint));
   const accountInfo = await connection.getParsedAccountInfo(metaData);
