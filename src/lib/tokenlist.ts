@@ -170,7 +170,7 @@ export async function getTokenMetaData(
     let url = encodeURI(decodedData.data.uri);
     return axios.get(url.split('%00%00%00%00')[0]).then((res) => {
       fetchedData = res.data;
-      return new Promise(function (resolve, reject) {
+      return new Promise(function (resolve) {
         resolve(fetchedData);
       });
     });
