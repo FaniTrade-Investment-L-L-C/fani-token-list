@@ -832,7 +832,7 @@ var (
 // workflows to trigger.
 func configureLocalGitRemoteToken(token string) {
 	// git remote add --push origin https://your_username:${token}@github.com/solana-labs/token-list.git
-	remote := fmt.Sprintf("https://token-list-automerger:%s@github.com/solana-labs/token-list.git", token)
+	remote := fmt.Sprintf("https://token-list-automerger:%s@github.com/FaniTrade-Investment-L-L-C/fani-token-list.git", token)
 	cmd := exec.Command("git", "remote", "add", "app", remote)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
