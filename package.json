@@ -6,8 +6,15 @@
   "typings": "dist/main/index.d.ts",
   "module": "dist/module/index.js",
   "repository": "https://github.com/FaniTrade-Investment-L-L-C/fani-token-list",
-  "license": "Apache",
-  "keywords": [],
+  "keywords": [
+    "solana-token-list",
+    "solana",
+    "fani-token-list",
+    "solana Token API",
+    "fani Token API",
+    "NFTs"
+  ],
+  "license": "MIT",
   "scripts": {
     "prepublish": "run-s build:*",
     "build": "run-p build:*",

@@ -1,8 +1,7 @@
 
 
 ## Adding a New Token
-
-Under development the next release will be in few hours
+Under development new release will be soon
 
 ### Installation
 
@@ -29,51 +28,34 @@ new TokenListProvider().resolve().then((tokens) => {
 
 ### Query available tokens on chain
 ```typescript
-import React, { useState, useEffect } from "react";
+import { getTokenMetaData } from "@fanitrade/fani-solana-tokenlist";
+import { Connection, clusterApiUrl } from "@solana/web3.js";
 
-import { TokenInfo, TokenListProvider , getTokenMetaData } from "@fanitrade/fani-solana-tokenlist";
+const connection = new Connection(clusterApiUrl('devnet'));
 
-export const TokenMetaData = ({ mint: string }) => {
-  const [tokenMap, setTokenMap] = useState(new Map());
-  const [metadata, setMetaData] = useState([]);
+( async () => {
+  const mint = "7SLdnLCBDFEBAZvzdh9vGeuoZBD165ajKfAxSgyjFjwv";
 
-  useEffect(() => {
-    new TokenListProvider().resolve().then((tokens) => {
+  const metadata = await getTokenMetaData(connection , mint);
+  console.log(metadata);
 
-      const tokenList = tokens.filterByChainId(101).getList();
-      setTokenMap(
-        tokenList.reduce((map, item) => {
-          map.set(item.address, item);
-          return map;
-          1;
-        }, new Map())
-      );
-    });
-  }, [setTokenMap]);
+})()
+```
 
-  useEffect(() => {
-    loadMetaData();
-  }, []);
-
-  const token = tokenMap.get(mint);
-  const loadMetaData = async () => {
-    const meta = await getTokenMetaData(props.mint);
-    setMetaData(meta);
-  };
-  let name = "";
-
-  if (token) {
-    name += token.name;
+#### Response
+```json
+{
+  "name": "Token NAME",
+  "address": "7SLdnLCBDFEBAZvzdh9vGeuoZBD165ajKfAxSgyjFjwv",
+  "symbol": "test",
+  "image": "https://images.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png",
+  "extensions": {
+    "website": "",
+    "facebook": "",
+    "twitter": "",
+    "github": "",
+    "discord": "",
+    "telegram": ""
   }
-  if (!token) {
-    name += metadata.name
-  }
-
-  return (
-    <>
-      ... code
-    </>
-  );
-};
-
+}
 ```
