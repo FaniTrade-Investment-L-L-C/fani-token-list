@@ -161,29 +161,10 @@ async function getMetadata(mint: PublicKey): Promise<PublicKey> {
   )[0];
 }
 
-interface Extesnions {
-  coingeckoId?: string;
-  coinmarketcap?: string;
-  discord?: string;
-  serumV3Usdc?: string;
-  twitter?: string;
-  website?: string;
-}
-
-interface TokenDetail {
-  chainId: number;
-  address: string;
-  symbol: string;
-  name: string;
-  decimals: string;
-  logoURI: string;
-  tags: string[];
-  extensions?: Extesnions;
-}
 
 export async function addTokenToList(
   gitAccessToken: string,
-  tokenDetails: TokenDetail
+  tokenDetails: any
 ) {
   const { address, symbol, name, decimals, logoURI, extensions } = tokenDetails;
 
