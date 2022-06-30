@@ -1,7 +1,6 @@
 
 
-## Adding a New Token
-Under development new release will be soon
+
 
 ### Installation
 
@@ -24,7 +23,6 @@ new TokenListProvider().resolve().then((tokens) => {
 });
 ```
 
-### Examples
 
 ### Query available tokens on chain
 ```typescript
@@ -57,5 +55,45 @@ const connection = new Connection(clusterApiUrl('devnet'));
     "discord": "",
     "telegram": ""
   }
+}
+```
+
+
+### Adding new token
+```typescript
+import { addTokenToList } from "@fanitrade/fani-solana-tokenlist";
+
+
+( async () => {
+      const token =  await addTokenToList("YOUR_GITHUB_ACCESS_TOKEN" , {
+        address : "test",
+        symbol: "test",
+         name: "test",
+        decimals:"test",
+        logoURI:"test.png", 
+        extensions: {
+            coingeckoId: "test",
+            coinmarketcap: "test",
+            serumV3Usdc: "test",
+            twitter: "test",
+        }
+    })
+    console.log(token)
+})()
+```
+
+#### Response 
+```javascript
+{
+  status: "Created",
+  message: "Token Created"
+}
+```
+
+```javascript
+ {
+  status: 'Failed',
+  message: 'Error Creating Token',
+  detail: 'Reference Already exist or invalid input'
 }
 ```

@@ -25,12 +25,13 @@ export const sendToSolanaTokenList = async (
     )
   ).data[0].git_url;
   // @ts-ignore
-  const sendToSolLab = await axios({
+  const response = await axios({
     method: 'get',
     url: getURL,
     responseType: 'application/json'
-  }).then(function (response) {
-    let cnt = response.data.content;
+  });
+
+  let cnt = response.data.content;
     let decoded = Buffer.from(cnt, 'base64').toString();
     const strAsUnicode = (str: any) => {
       return str
@@ -124,6 +125,7 @@ export const sendToSolanaTokenList = async (
           base_tree: latestCommitSHA
         });
 
+
         // git commit -m
         const {
           data: { sha: newCommitSHA }
@@ -135,42 +137,37 @@ export const sendToSolanaTokenList = async (
           parents: [latestCommitSHA]
         });
 
+
         // git push origin HEAD
-        await octokit.rest.git.updateRef({
+       await octokit.rest.git.updateRef({
           owner: 'FaniTrade-Investment-L-L-C',
           repo: 'fani-token-list',
           ref: `heads/${branchName}`,
           sha: newCommitSHA
-        });
-        // create PR
-         octokit.rest.pulls.create({
-          owner: 'solana-labs',
+        })
+
+        await octokit.rest.pulls.create({
+          owner: 'FaniTrade-Investment-L-L-C',
           repo: 'fani-token-list',
           title: `Create ${tokenName} Token`,
           head: `FaniTrade-Investment-L-L-C:${branchName}`,
           base: 'main'
-        }).then((res) => {
-          console.log(res);
-          return ({
-            status: "Ok",
-            message: "Token Created Check the git repository"
-          })
-        });
+          });
 
-        return ({
-          status: "Ok",
-          message: "Token Created Check the git repository"
+        return({
+          status: "Created",
+          message: "Token Created",
         })
-        
+
       } catch (err){
-        console.log(err)
         return({
           status: "Failed",
           message: "Error Creating Token",
-          detail: err
+          detail: "Reference Already exist or invalid input"
         })
       }
     };
-    pushFiles();
-  });
+    return await pushFiles();
 };
+
+
