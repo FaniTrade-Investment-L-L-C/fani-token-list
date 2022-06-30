@@ -114,6 +114,7 @@
     ]
   },
   "dependencies": {
+    "@octokit/rest": "^18.12.0",
     "@project-serum/anchor": "^0.25.0-beta.1",
     "axios": "^0.27.2",
     "borsh": "^0.7.0",

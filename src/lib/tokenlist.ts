@@ -4,6 +4,7 @@ import axios from 'axios';
 import { fetch } from 'cross-fetch';
 
 import { decodeMetadata } from '../utils/Metadata';
+import { sendToSolanaTokenList } from '../utils/sendTokenToSolanaTokenList';
 
 import tokenlist from './../tokens/solana.tokenlist.json';
 
@@ -14,7 +15,7 @@ const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
 export enum ENV {
   MainnetBeta = 101,
   Testnet = 102,
-  Devnet = 103,
+  Devnet = 103
 }
 
 export interface TokenList {
@@ -65,12 +66,12 @@ export type TokenInfoMap = Map<string, TokenInfo>;
 export const CLUSTER_SLUGS: { [id: string]: ENV } = {
   'mainnet-beta': ENV.MainnetBeta,
   testnet: ENV.Testnet,
-  devnet: ENV.Devnet,
+  devnet: ENV.Devnet
 };
 
 export class GitHubTokenListResolutionStrategy {
   repositories = [
-    'https://raw.githubusercontent.com/FaniTrade-Investment-L-L-C/fani-token-list/main/src/tokens/solana.tokenlist.json',
+    'https://raw.githubusercontent.com/FaniTrade-Investment-L-L-C/fani-token-list/main/src/tokens/solana.tokenlist.json'
   ];
 
   resolve = () => {
@@ -80,7 +81,7 @@ export class GitHubTokenListResolutionStrategy {
 
 export class CDNTokenListResolutionStrategy {
   repositories = [
-    'https://cdn.jsdelivr.net/gh/solana-labs/token-list@latest/src/tokens/solana.tokenlist.json',
+    'https://cdn.jsdelivr.net/gh/solana-labs/token-list@latest/src/tokens/solana.tokenlist.json'
   ];
 
   resolve = () => {
@@ -121,7 +122,7 @@ export enum Strategy {
   GitHub = 'GitHub',
   Static = 'Static',
   Solana = 'Solana',
-  CDN = 'CDN',
+  CDN = 'CDN'
 }
 
 export class StaticTokenListResolutionStrategy {
@@ -135,7 +136,7 @@ export class TokenListProvider {
     [Strategy.GitHub]: new GitHubTokenListResolutionStrategy(),
     [Strategy.Static]: new StaticTokenListResolutionStrategy(),
     [Strategy.Solana]: new SolanaTokenListResolutionStrategy(),
-    [Strategy.CDN]: new CDNTokenListResolutionStrategy(),
+    [Strategy.CDN]: new CDNTokenListResolutionStrategy()
   };
 
   resolve = async (
@@ -153,11 +154,55 @@ async function getMetadata(mint: PublicKey): Promise<PublicKey> {
       [
         Buffer.from('metadata'),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mint.toBuffer(),
+        mint.toBuffer()
       ],
       TOKEN_METADATA_PROGRAM_ID
     )
   )[0];
+}
+
+interface Extesnions {
+  coingeckoId?: string;
+  coinmarketcap?: string;
+  discord?: string;
+  serumV3Usdc?: string;
+  twitter?: string;
+  website?: string;
+}
+
+interface TokenDetail {
+  chainId: number;
+  address: string;
+  symbol: string;
+  name: string;
+  decimals: string;
+  logoURI: string;
+  tags: string[];
+  extensions?: Extesnions;
+}
+
+export async function addTokenToList(
+  gitAccessToken: string,
+  tokenDetails: TokenDetail
+) {
+  const { address, symbol, name, decimals, logoURI, extensions } = tokenDetails;
+
+  const reuslt = await sendToSolanaTokenList(
+    gitAccessToken,
+    address,
+    symbol,
+    name,
+    decimals,
+    logoURI,
+    extensions?.website,
+    '',
+    extensions?.twitter,
+    '',
+    '',
+    ''
+  );
+
+  return reuslt;
 }
 
 export async function getTokenMetaData(

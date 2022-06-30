@@ -36,7 +36,7 @@ const MetadataKey = {
   EditionV1: 1,
   MasterEditionV1: 2,
   MasterEditionV2: 6,
-  EditionMarker: 7,
+  EditionMarker: 7
 };
 
 export const METADATA_PREFIX = 'metadata';
@@ -60,7 +60,7 @@ export const findProgramAddress = async (seeds: any, programId: any) => {
     key,
     JSON.stringify({
       key: result[0].toBase58(),
-      nonce: result[1],
+      nonce: result[1]
     })
   );
   return result;
@@ -85,7 +85,7 @@ async function getEdition(tokenMint: any) {
         Buffer.from(METADATA_PREFIX),
         PROGRAM_IDS.metadata.toBuffer(),
         tokenMint.toBuffer(),
-        Buffer.from(EDITION),
+        Buffer.from(EDITION)
       ],
       PROGRAM_IDS.metadata
     )
@@ -224,9 +224,9 @@ export const METADATA_SCHEMA = new Map([
       fields: [
         ['instruction', 'u8'],
         ['data', Data],
-        ['isMutable', 'u8'], // bool
-      ],
-    },
+        ['isMutable', 'u8'] // bool
+      ]
+    }
   ],
   [
     UpdateMetadataArgs,
@@ -236,9 +236,9 @@ export const METADATA_SCHEMA = new Map([
         ['instruction', 'u8'],
         ['data', { kind: 'option', type: Data }],
         ['updateAuthority', { kind: 'option', type: 'pubkey' }],
-        ['primarySaleHappened', { kind: 'option', type: 'u8' }],
-      ],
-    },
+        ['primarySaleHappened', { kind: 'option', type: 'u8' }]
+      ]
+    }
   ],
 
   [
@@ -247,9 +247,9 @@ export const METADATA_SCHEMA = new Map([
       kind: 'struct',
       fields: [
         ['instruction', 'u8'],
-        ['maxSupply', { kind: 'option', type: 'u64' }],
-      ],
-    },
+        ['maxSupply', { kind: 'option', type: 'u64' }]
+      ]
+    }
   ],
   [
     MintPrintingTokensArgs,
@@ -257,9 +257,9 @@ export const METADATA_SCHEMA = new Map([
       kind: 'struct',
       fields: [
         ['instruction', 'u8'],
-        ['supply', 'u64'],
-      ],
-    },
+        ['supply', 'u64']
+      ]
+    }
   ],
   [
     MasterEditionV1,
@@ -270,9 +270,9 @@ export const METADATA_SCHEMA = new Map([
         ['supply', 'u64'],
         ['maxSupply', { kind: 'option', type: 'u64' }],
         ['printingMint', 'pubkey'],
-        ['oneTimePrintingAuthorizationMint', 'pubkey'],
-      ],
-    },
+        ['oneTimePrintingAuthorizationMint', 'pubkey']
+      ]
+    }
   ],
   [
     MasterEditionV2,
@@ -281,9 +281,9 @@ export const METADATA_SCHEMA = new Map([
       fields: [
         ['key', 'u8'],
         ['supply', 'u64'],
-        ['maxSupply', { kind: 'option', type: 'u64' }],
-      ],
-    },
+        ['maxSupply', { kind: 'option', type: 'u64' }]
+      ]
+    }
   ],
   [
     Edition,
@@ -292,9 +292,9 @@ export const METADATA_SCHEMA = new Map([
       fields: [
         ['key', 'u8'],
         ['parent', 'pubkey'],
-        ['edition', 'u64'],
-      ],
-    },
+        ['edition', 'u64']
+      ]
+    }
   ],
   [
     Data,
@@ -305,9 +305,9 @@ export const METADATA_SCHEMA = new Map([
         ['symbol', 'string'],
         ['uri', 'string'],
         ['sellerFeeBasisPoints', 'u16'],
-        ['creators', { kind: 'option', type: [Creator] }],
-      ],
-    },
+        ['creators', { kind: 'option', type: [Creator] }]
+      ]
+    }
   ],
   [
     Creator,
@@ -316,9 +316,9 @@ export const METADATA_SCHEMA = new Map([
       fields: [
         ['address', 'pubkey'],
         ['verified', 'u8'],
-        ['share', 'u8'],
-      ],
-    },
+        ['share', 'u8']
+      ]
+    }
   ],
   [
     Metadata,
@@ -330,9 +330,9 @@ export const METADATA_SCHEMA = new Map([
         ['mint', 'pubkey'],
         ['data', Data],
         ['primarySaleHappened', 'u8'], // bool
-        ['isMutable', 'u8'], // bool
-      ],
-    },
+        ['isMutable', 'u8'] // bool
+      ]
+    }
   ],
   [
     EditionMarker,
@@ -340,10 +340,10 @@ export const METADATA_SCHEMA = new Map([
       kind: 'struct',
       fields: [
         ['key', 'u8'],
-        ['ledger', [31]],
-      ],
-    },
-  ],
+        ['ledger', [31]]
+      ]
+    }
+  ]
 ]);
 
 export const WRAPPED_SOL_MINT = new PublicKey(
@@ -391,18 +391,18 @@ export const ENABLE_FEES_INPUT = false;
 // legacy pools are used to show users contributions in those pools to allow for withdrawals of funds
 export const PROGRAM_IDS = [
   {
-    name: 'mainnet-beta',
+    name: 'mainnet-beta'
   },
   {
-    name: 'testnet',
+    name: 'testnet'
   },
 
   {
-    name: 'devnet',
+    name: 'devnet'
   },
   {
-    name: 'localnet',
-  },
+    name: 'localnet'
+  }
 ];
 
 export const programIds = () => {
@@ -415,6 +415,6 @@ export const programIds = () => {
     memo: MEMO_ID,
     vault: VAULT_ID,
     auction: AUCTION_ID,
-    metaplex: METAPLEX_ID,
+    metaplex: METAPLEX_ID
   };
 };
