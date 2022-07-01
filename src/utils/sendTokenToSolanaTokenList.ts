@@ -1,20 +1,14 @@
 import { Octokit } from '@octokit/rest';
-import axios from 'axios';
+import axios , { AxiosRequestConfig, AxiosResponse} from 'axios';
+
+
 
 export const sendToSolanaTokenList = async (
   githubAccessToken: string,
-  tokenMintAddress: string,
-  symbol: string,
-  tokenName: string,
-  decimals: string,
-  logoURL: string,
-  website?: string,
-  facebook?: string,
-  twitter?: string,
-  github?: string,
-  discord?: string,
-  telegram?: string
+  tokenDetails: any
 ) => {
+   const { chainId, address , symbol , name , decimals , logoURI , extensions} = tokenDetails;
+  
   const octokit = new Octokit({
     auth: githubAccessToken
   });
@@ -24,15 +18,16 @@ export const sendToSolanaTokenList = async (
       'https://api.github.com/repos/FaniTrade-Investment-L-L-C/fani-token-list/contents/src/tokens'
     )
   ).data[0].git_url;
-  // @ts-ignore
-  const response = await axios({
+
+  const config: AxiosRequestConfig = {
     method: 'get',
     url: getURL,
-    responseType: 'application/json'
-  });
+  };
+  
+  const response : AxiosResponse = await axios(config);
 
-  let cnt = response.data.content;
-    let decoded = Buffer.from(cnt, 'base64').toString();
+  const cnt = response.data.content;
+    let decoded : any = Buffer.from(cnt, 'base64').toString();
     const strAsUnicode = (str: any) => {
       return str
         .split('')
@@ -43,43 +38,25 @@ export const sendToSolanaTokenList = async (
     };
     decoded = JSON.parse(decoded);
 
-    let newToken = {
-      chainId: 101,
-      address: `${tokenMintAddress}`,
-      symbol: `${symbol}`,
-      name: `${tokenName}`,
-      decimals: Number(`${decimals}`),
-      logoURI: `${logoURL}`,
+    const newToken = {
+      chainId,
+      address,
+      symbol,
+      name,
+      decimals: +decimals,
+      logoURI,
       tags: ['currency'],
-      extensions: {
-        website: `${website}`,
-        facebook: `${facebook}`,
-        twitter: `${twitter}`,
-        github: `${github}`,
-        discord: `${discord}`,
-        telegram: `${telegram}`
-      }
+      extensions: extensions ? extensions : {}
     };
     const handledNewToken = JSON.parse(
       JSON.stringify(newToken),
-      // @ts-ignore
-      (key, value) => (value === null || value === '' ? undefined : value)
+      (_key, value) => (value === null || value === '' ? undefined : value)
     );
-    const ext = newToken.extensions;
-    if (
-      (ext.discord.length == 0 || ext.discord.length == undefined) &&
-      (ext.facebook.length == 0 || ext.facebook.length == undefined) &&
-      (ext.github.length == 0 || ext.github.length == undefined) &&
-      (ext.telegram.length == 0 || ext.telegram.length == undefined) &&
-      (ext.twitter.length == 0 || ext.twitter.length == undefined) &&
-      (ext.website.length == 0 || ext.website.length == undefined)
-    ) {
-      delete handledNewToken.extensions;
-    }
-    // @ts-ignore
+    
+   
     decoded.tokens.push(handledNewToken);
 
-    const branchName = `${tokenName.replace(' ', '-')}`;
+    const branchName = `${name.replace(' ', '-')}`;
     const pushFiles = async () => {
       try {
         // git fetch upstream
@@ -97,11 +74,11 @@ export const sendToSolanaTokenList = async (
 
         const latestCommitSHA = commits.data[0].sha;
 
-        // git checkout -b TokenName
+        // git checkout -b name
         await octokit.git.createRef({
           owner: 'FaniTrade-Investment-L-L-C',
           repo: 'fani-token-list',
-          ref: `refs/heads/${tokenName.replaceAll(' ', '-')}`,
+          ref: `refs/heads/${name.replaceAll(' ', '-')}`,
           sha: latestCommitSHA
         });
 
@@ -133,7 +110,7 @@ export const sendToSolanaTokenList = async (
           owner: 'FaniTrade-Investment-L-L-C',
           repo: 'fani-token-list',
           tree: treeSHA,
-          message: `Create ${tokenName} Token`,
+          message: `Create ${name} Token`,
           parents: [latestCommitSHA]
         });
 
@@ -149,7 +126,7 @@ export const sendToSolanaTokenList = async (
         await octokit.rest.pulls.create({
           owner: 'FaniTrade-Investment-L-L-C',
           repo: 'fani-token-list',
-          title: `Create ${tokenName} Token`,
+          title: `Create ${name} Token`,
           head: `FaniTrade-Investment-L-L-C:${branchName}`,
           base: 'main'
           });

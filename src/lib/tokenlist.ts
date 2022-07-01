@@ -2,15 +2,36 @@ import * as anchor from '@project-serum/anchor';
 import { Connection, PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { fetch } from 'cross-fetch';
+import Joi from 'joi';
 
 import { decodeMetadata } from '../utils/Metadata';
 import { sendToSolanaTokenList } from '../utils/sendTokenToSolanaTokenList';
-
 import tokenlist from './../tokens/solana.tokenlist.json';
-
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
 );
+
+
+const schema = Joi.object({
+  chainId: Joi.number().
+               required(),
+  address: Joi.string()
+      .required(),
+
+  symbol: Joi.string()
+             .required(),
+
+  name: Joi.string()
+           .required(),
+
+  decimals: Joi.string().
+           required(),
+  logoURI: Joi.string()
+              .required(),
+  extensions: Joi.object().optional()
+})
+
+
 
 export enum ENV {
   MainnetBeta = 101,
@@ -166,24 +187,37 @@ export async function addTokenToList(
   gitAccessToken: string,
   tokenDetails: any
 ) {
-  const { address, symbol, name, decimals, logoURI, extensions } = tokenDetails;
+  // const { address, symbol, name, decimals, logoURI, extensions } = tokenDetails;
+ 
+  console.log(gitAccessToken);
+  const { error } = schema.validate({ ...tokenDetails });
+  if(error) {
+    console.log(error)
+    return({
+      status: "Failed",
+      message: "Error Creating Token",
+      detail: error.details[0].message
+    })
+  }
+  else {
+    const isEmpty = Object.values(tokenDetails.extensions).every(x => x === null || x === '');
+   if(isEmpty) {
+     delete tokenDetails.extensions;
+     console.log("deleting extension obj  values...");
+     console.log(tokenDetails)
+   } else {
+     Object.keys(tokenDetails.extensions).forEach((k) => tokenDetails.extensions[k] == '' && delete tokenDetails.extensions[k]);
+      console.log("deleting unused values");
+      console.log(tokenDetails);
+   }
 
-  const reuslt = await sendToSolanaTokenList(
+   const reuslt = await sendToSolanaTokenList(
     gitAccessToken,
-    address,
-    symbol,
-    name,
-    decimals,
-    logoURI,
-    extensions?.website,
-    '',
-    extensions?.twitter,
-    '',
-    '',
-    ''
+    tokenDetails
   );
 
-  return reuslt;
+  return reuslt
+  }
 }
 
 export async function getTokenMetaData(

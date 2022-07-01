@@ -66,16 +66,15 @@ import { addTokenToList } from "@fanitrade/fani-solana-tokenlist";
 
 ( async () => {
       const token =  await addTokenToList("YOUR_GITHUB_ACCESS_TOKEN" , {
-        address : "test",
-        symbol: "test",
-         name: "test",
-        decimals:"test",
-        logoURI:"test.png", 
+        address : "MINT ADDRESS",
+        symbol: "SYL",
+         name: "TOKEN NAME",
+        decimals:"0",
+        logoURI:"LOG0_URL.png", 
         extensions: {
-            coingeckoId: "test",
-            coinmarketcap: "test",
-            serumV3Usdc: "test",
-            twitter: "test",
+            website: "WEBSITE_URL",
+            facebook: "FACEBOOK_URL",
+            twitter: "TWITTER_URL",
         }
     })
     console.log(token)
