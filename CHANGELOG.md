@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.17](https://github.com/FaniTrade-Investment-L-L-C/fani-token-list/compare/v1.3.15...v1.3.17) (2022-07-01)
+
 ### [1.3.15](https://github.com/FaniTrade-Investment-L-L-C/fani-token-list/compare/v1.3.13...v1.3.15) (2022-06-30)
 
 ### [1.3.13](https://github.com/FaniTrade-Investment-L-L-C/fani-token-list/compare/v1.3.11...v1.3.13) (2022-06-30)
